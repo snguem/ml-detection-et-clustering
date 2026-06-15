@@ -1,0 +1,245 @@
+{%- extends 'lab/index.html.j2' -%}
+
+{%- block header -%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{{ resources.metadata.name | replace("_", " ") | title }}</title>
+<style>
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #1a1a2e;
+    background: #f4f5f7;
+  }
+
+  /* ── Bandeau supérieur ── */
+  .rapport-header {
+    background: #1a1a2e;
+    color: #ffffff;
+    padding: 32px 60px 24px;
+    border-bottom: 4px solid #4a90d9;
+  }
+  .rapport-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .rapport-header .meta {
+    font-size: 12px;
+    color: #a8b8cc;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .rapport-header .meta span::before {
+    content: "▸ ";
+    color: #4a90d9;
+  }
+
+  /* ── Corps du rapport ── */
+  #notebook-container, .jp-Notebook {
+    max-width: 960px;
+    margin: 40px auto 80px;
+    padding: 0 24px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  /* ── Cellules ── */
+  .jp-Cell, .cell {
+    margin-bottom: 20px;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  /* Masquer tout le code et les prompts */
+  .jp-InputArea,
+  .jp-Cell-inputWrapper,
+  .input_area,
+  .input,
+  .prompt,
+  .jp-InputPrompt,
+  .jp-OutputPrompt,
+  .out_prompt_overlay,
+  .jp-Cell-inputCollapser,
+  .jp-Cell-outputCollapser,
+  div[class*="CodeMirror"],
+  .highlight pre {
+    display: none !important;
+  }
+
+  /* ── Outputs ── */
+  .jp-OutputArea,
+  .output_area {
+    margin: 0;
+    padding: 0;
+  }
+  .jp-OutputArea-output,
+  .output_subarea {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* ── Markdown ── */
+  .jp-MarkdownOutput, .text_cell_render {
+    padding: 4px 0 !important;
+  }
+  .jp-MarkdownOutput h1, .text_cell_render h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+    border-bottom: 2px solid #4a90d9;
+    padding-bottom: 6px;
+    margin: 36px 0 16px;
+  }
+  .jp-MarkdownOutput h2, .text_cell_render h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+    border-left: 4px solid #4a90d9;
+    padding-left: 10px;
+    margin: 28px 0 12px;
+  }
+  .jp-MarkdownOutput h3, .text_cell_render h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e6e;
+    margin: 20px 0 8px;
+  }
+  .jp-MarkdownOutput p, .text_cell_render p {
+    margin-bottom: 10px;
+    text-align: justify;
+  }
+  .jp-MarkdownOutput ul, .jp-MarkdownOutput ol,
+  .text_cell_render ul, .text_cell_render ol {
+    padding-left: 22px;
+    margin-bottom: 10px;
+  }
+  .jp-MarkdownOutput li, .text_cell_render li {
+    margin-bottom: 4px;
+  }
+  .jp-MarkdownOutput strong, .text_cell_render strong {
+    color: #1a1a2e;
+  }
+
+  /* ── Tableaux ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+    background: #ffffff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  }
+  thead tr {
+    background: #1a1a2e;
+    color: #ffffff;
+  }
+  th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #e8eaf0;
+    color: #1a1a2e;
+  }
+  tbody tr:nth-child(even) { background: #f8f9fc; }
+  tbody tr:hover { background: #eef2fb; }
+
+  /* ── Graphiques ── */
+  .jp-OutputArea-output img,
+  .output_png img,
+  .output_jpeg img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 16px auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  }
+
+  /* Plotly / outputs HTML */
+  .jp-RenderedHTMLCommon iframe,
+  .output_html iframe {
+    width: 100%;
+    border: none;
+  }
+
+  /* ── Texte brut (print) ── */
+  .jp-OutputArea-output pre,
+  .output_text pre {
+    background: #f0f2f8;
+    border-left: 3px solid #4a90d9;
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #2c3e6e;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+
+  /* ── Pied de page ── */
+  .rapport-footer {
+    background: #1a1a2e;
+    color: #a8b8cc;
+    text-align: center;
+    padding: 16px 60px;
+    font-size: 11px;
+    border-top: 3px solid #4a90d9;
+    position: relative;
+  }
+  .rapport-footer span { margin: 0 16px; }
+
+  @media print {
+    body { background: #fff; }
+    .rapport-header, .rapport-footer { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .jp-Cell { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="rapport-header">
+  <h1>{{ resources.rapport_titre }}</h1>
+  <div class="meta">
+    <span>Type : Rapport d'analyse</span>
+    <span>Date : {{ resources.rapport_date }}</span>
+    <span>Statut : Confidentiel</span>
+  </div>
+</div>
+{%- endblock header -%}
+
+{%- block body_loop -%}
+<div id="notebook-container">
+{{ super() }}
+</div>
+{%- endblock body_loop -%}
+
+{%- block footer -%}
+<div class="rapport-footer">
+  <span>Document généré automatiquement</span>
+  <span>|</span>
+  <span>{{ resources.rapport_date }}</span>
+  <span>|</span>
+  <span>Usage interne — Diffusion restreinte</span>
+</div>
+</body>
+</html>
+{%- endblock footer -%}

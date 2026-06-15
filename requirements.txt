@@ -1,0 +1,32 @@
+# Manipulation de données
+pandas
+numpy
+
+# Visualisation
+matplotlib
+seaborn
+plotly
+
+# Machine Learning
+scikit-learn
+xgboost
+lightgbm
+
+# Réseau de neurones
+tensorflow
+
+# Déséquilibre des classes
+imbalanced-learn
+
+# Interprétabilité
+shap
+
+# MLOps / tracking
+mlflow
+
+# API
+fastapi
+uvicorn
+
+# Dashboard
+streamlit
